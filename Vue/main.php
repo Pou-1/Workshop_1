@@ -1,9 +1,12 @@
 <?php
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
-?>
 
-<?php require_once "../Modele/connexion.php"; ?>
+require_once "../Modele/connexion.php";
+
+// Charger les articles
+$articles = require_once "../Modele/article.php";
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -18,7 +21,16 @@ ini_set("display_errors", 1);
   </header>
 
   <main class="container mx-auto mt-8 p-4">
-    <?php require_once "../Modele/article.php"; ?>
+    <h2 class="text-xl font-semibold mb-4">Liste des articles</h2>
+    <ul class="space-y-4">
+      <?php foreach ($articles as $article): ?>
+        <li class="bg-white p-4 shadow rounded-lg hover:border-blue border-2 border-white">
+          <h3 class="text-lg font-bold"><?= htmlspecialchars($article['titre']) ?></h3>
+          <p class="text-gray-700"><?= htmlspecialchars($article['contenu']) ?></p>
+          <span class="text-sm text-blue-500">#<?= htmlspecialchars($article['tags']) ?></span>
+        </li>
+      <?php endforeach; ?>
+    </ul>
   </main>
 
   <footer class="bg-gray-200 text-center p-4 mt-8">

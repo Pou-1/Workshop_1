@@ -1,10 +1,11 @@
 <?php
-$stmt = $pdo->query("SELECT id, titre, contenu FROM articles");
+// article.php → renvoie un tableau d’articles
 
-echo "<h2>Liste des articles</h2>";
-echo "<ul>";
-while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    echo "<li><strong>" . htmlspecialchars($row['titre']) . "</strong> - " 
-         . htmlspecialchars($row['contenu']) . "</li>";
-}
-echo "</ul>";
+// Préparer et exécuter la requête
+$stmt = $pdo->query("SELECT id, titre, contenu, tags FROM articles");
+
+// Stocker tous les articles dans un tableau associatif
+$articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Retourner le tableau
+return $articles;
