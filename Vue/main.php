@@ -26,14 +26,34 @@ $articles = require_once "../Modele/article.php";
     <h2 class="text-xl font-semibold mb-4">Liste des articles</h2>
     <ul class="gap-4 grid grid-cols-3">
       <?php foreach ($articles as $article): ?>
-        <li class="bg-white p-4 shadow rounded-lg hover:border-blue-500 trans-fast hover:bg-blue-50 border-2 border-white">
-          <h3 class="text-lg font-bold"><?= htmlspecialchars($article['titre']) ?></h3>
-          <p class="text-gray-700"><?= htmlspecialchars($article['resumee']) ?></p>
-          <span class="text-sm text-blue-500">#<?= htmlspecialchars($article['tags']) ?></span>
-          <span class="text-sm text-blue-500">#<?= htmlspecialchars($article['auteurs']) ?></span>
-          <span class="text-sm text-blue-500">#<?= htmlspecialchars($article['date_publication']) ?></span>
-        </li>
-      <?php endforeach; ?>
+    <li class="bg-white p-4 shadow rounded-lg hover:border-blue-500 transition hover:bg-blue-50 border-2 border-white">
+        <div class="flex justify-between items-center mb-2">
+            <h3 class="text-lg font-bold"><?= htmlspecialchars($article['titre']) ?></h3>
+            <span class="text-sm text-gray-500"><?= htmlspecialchars($article['date_publication']) ?></span>
+        </div>
+
+        <p class="text-gray-700 mb-3"><?= htmlspecialchars($article['resumee']) ?></p>
+
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-2 mb-2">
+            <?php foreach ($article['tags'] as $tag): ?>
+                <span class="px-2 py-1 text-sm bg-blue-100 text-blue-600 rounded">
+                    #<?= htmlspecialchars($tag['nom']) ?>
+                </span>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Auteurs -->
+        <div class="flex flex-wrap gap-2">
+            <?php foreach ($article['auteurs'] as $auteur): ?>
+                <span class="px-2 py-1 text-sm bg-green-100 text-green-600 rounded">
+                    <?= htmlspecialchars($auteur['prenom'] . " " . $auteur['nom']) ?>
+                </span>
+            <?php endforeach; ?>
+        </div>
+    </li>
+<?php endforeach; ?>
+
     </ul>
   </main>
 
