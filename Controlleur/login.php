@@ -8,26 +8,17 @@ require_once '../Modele/connexion.php';
 $erreur = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nom = $_POST['nom'] ?? '';
-    $prenom = $_POST['prenom'] ?? '';
     $email = $_POST['email'] ?? '';
     $mdp = $_POST['mdp'] ?? '';
-    $tel = $_POST['tel'] ?? '';
 
-    // Sélectionne l'utilisateur par tous les champs sauf le mot de passe
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE nom = ? AND prenom = ? AND email = ? AND tel = ?");
-    $stmt->execute([$nom, $prenom, $email, $tel]);
+    // Sélectionne l'utilisateur par email uniquement
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
     $user = $stmt->fetch();
-    var_dump([$nom, $prenom, $email, $tel]); // Affiche les valeurs envoyées
-    var_dump($user);
 
     if ($user && password_verify($mdp, $user['mdp'])) {
         session_start();
         $_SESSION['user'] = $user;
-
-        if (headers_sent($file, $line)) {
-            die("Headers already sent in $file on line $line");
-        }
 
         header('Location: /Workshop_1/Vue/vue_accueil.php');
         exit();
