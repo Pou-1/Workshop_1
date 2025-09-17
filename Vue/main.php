@@ -2,6 +2,8 @@
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
+session_start();
+
 require_once "../Modele/connexion.php";
 
 $articles = require_once "../Modele/article.php";
@@ -15,12 +17,57 @@ $articles = require_once "../Modele/article.php";
   <script src="../css/style.css"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
+    
+<header class="bg-blue-600 text-white gap-2 p-6 pl-52 flex shadow-md">
+    <h1 class="text-2xl font-bold">
+        Bienvenue
+        <?php if (isset($_SESSION['user'])): ?>
+            <?= htmlspecialchars($_SESSION['user']['nom']) . " " . htmlspecialchars($_SESSION['user']['prenom']) ?>
+        <?php endif; ?>
+    </h1>
+</header>
 
-    <header class="bg-blue-600 text-white gap-2 p-6 pl-52 flex shadow-md">
-        <h1 class="text-2xl font-bold">Bienvenue</h1>
-        <p class="text-2xl">Surname</p>
-        <p class="font-bold text-2xl">L !</p>
-    </header>
+<!-- Navbar avec tags défilants et barre de recherche -->
+<nav class="bg-white shadow flex items-center justify-between px-10 py-4 mb-2">
+    <!-- Tags avec flèches de défilement -->
+    <div class="flex items-center gap-2">
+        <!-- Flèche gauche -->
+        <button id="leftArrow" class="text-xl px-2 text-gray-600 hover:text-black" disabled>
+            &#8592;
+        </button>
+
+        <!-- Conteneur scrollable des tags -->
+        <div id="tagContainer" class="flex gap-2 overflow-hidden w-[400px]">
+            <?php
+            $navbarTags = ['PHP', 'JS', 'CSS', 'SQL', 'VueJS', 'Laravel', 'React', 'Docker'];
+            foreach ($navbarTags as $tag): ?>
+                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded cursor-pointer whitespace-nowrap min-w-fit">
+                    #<?= htmlspecialchars($tag) ?>
+                </span>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Flèche droite -->
+        <button id="rightArrow" class="text-xl px-2 text-gray-600 hover:text-black">
+            &#8594;
+        </button>
+    </div>
+
+    <!-- Barre de recherche -->
+    <form method="GET" action="" class="flex items-center gap-2">
+        <input
+            type="text"
+            name="search"
+            placeholder="Rechercher un article..."
+            class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+        <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
+            Rechercher
+        </button>
+    </form>
+</nav>
+
+
 
   <main class="container mx-auto mt-8 p-4">
     <h2 class="text-xl font-semibold mb-4">Liste des articles</h2>
@@ -63,3 +110,31 @@ $articles = require_once "../Modele/article.php";
 
 </body>
 </html>
+
+<script>
+    const tagContainer = document.getElementById('tagContainer');
+    const leftArrow = document.getElementById('leftArrow');
+    const rightArrow = document.getElementById('rightArrow');
+
+    const scrollAmount = 120; // Ajuste selon la taille des tags
+
+    leftArrow.addEventListener('click', () => {
+        tagContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        updateArrows();
+    });
+
+    rightArrow.addEventListener('click', () => {
+        tagContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        updateArrows();
+    });
+
+    function updateArrows() {
+        setTimeout(() => {
+            leftArrow.disabled = tagContainer.scrollLeft <= 0;
+            rightArrow.disabled = tagContainer.scrollLeft + tagContainer.clientWidth >= tagContainer.scrollWidth;
+        }, 200);
+    }
+
+    window.addEventListener('load', updateArrows);
+    tagContainer.addEventListener('scroll', updateArrows);
+</script>
