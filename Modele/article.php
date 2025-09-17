@@ -2,7 +2,7 @@
 // article.php → renvoie un tableau d’articles avec tags et auteurs détaillés
 
 // Charger les articles
-$stmt = $pdo->query("SELECT id, titre, resumee, tags, date_publication, auteurs FROM articles");
+$stmt = $pdo->query("SELECT * FROM articles");
 $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($articles as &$article) {
