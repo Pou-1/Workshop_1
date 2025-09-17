@@ -20,11 +20,13 @@ $articles = require_once "../Modele/article.php";
 <body class="bg-gray-100 text-gray-800">
     
 <header class="bg-red-600 text-white gap-2 p-6 pl-52 flex shadow-md">
-    <h1 class="text-2xl font-bold">
+    <h1 class="text-2xl">
         Bienvenue
-        <?php if (isset($_SESSION['user'])): ?>
-            <?= htmlspecialchars($_SESSION['user']['nom']) . " " . htmlspecialchars($_SESSION['user']['prenom']) ?>
-        <?php endif; ?>
+        <h1 class="font-bold text-2xl">
+            <?php if (isset($_SESSION['user'])): ?>
+                <?= htmlspecialchars($_SESSION['user']['nom']) . " " . htmlspecialchars($_SESSION['user']['prenom']) ?>
+            <?php endif; ?>
+        </h1>
     </h1>
 </header>
 
@@ -94,8 +96,8 @@ $articles = require_once "../Modele/article.php";
     <div class="bg-white rounded-lg shadow-lg z-10 max-w-3xl w-full p-6 relative">
       
       <!-- Bouton fermer -->
-      <button onclick="LikedArticleModal()" class="absolute top-3 right-3 text-gray-600 hover:text-red-600 text-xl font-bold">
-        Like !
+      <button onclick="LikedArticleModal(<?= htmlspecialchars($_SESSION['user']['id'])?>, currentArticleId)"  class="absolute right-6 top-0 mt-4 border-red-600 border bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200">
+        ❤️ Like !
       </button>
 
       <!-- Contenu dynamique -->

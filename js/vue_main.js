@@ -1,4 +1,7 @@
-function openArticleModal(article) {
+let currentArticleId = null; // variable globale
+
+    function openArticleModal(article) {
+      currentArticle = article.articleId; 
       document.getElementById("modalTitle").innerText = article.titre;
       document.getElementById("modalDate").innerText = "Publié le : " + article.date_publication;
       document.getElementById("modalResumee").innerText = article.resumee;
@@ -42,5 +45,28 @@ function openArticleModal(article) {
     }
 
     function closeArticleModal() {
+      currentArticle = null; 
       document.getElementById("articleModal").classList.add("hidden");
+    }
+
+    function LikedArticleModal(userId, articleId) {
+        fetch("../Modele/like.php", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ user_id: userId, article_id: articleId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+            alert("✅ Like enregistré !");
+            } else {
+            alert("❌ Erreur : " + data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Erreur réseau !");
+        });
     }
