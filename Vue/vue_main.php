@@ -19,8 +19,9 @@ $articles = require_once "../Modele/article.php";
   <!-- Header -->
   <header class="bg-red-600 text-white gap-2 p-6 pl-52 flex shadow-md">
       <h1 class="text-2xl font-bold">Bienvenue</h1>
-      <p class="text-2xl">Surname</p>
-      <p class="font-bold text-2xl">L !</p>
+      <p class="text-2xl bold">
+        <?php echo htmlspecialchars($user['prenom'] . ' ' . $user['nom']); ?>
+      </p>
   </header>
 
   <!-- Liste d'articles -->
@@ -48,8 +49,8 @@ $articles = require_once "../Modele/article.php";
     <div class="bg-white rounded-lg shadow-lg z-10 max-w-3xl w-full p-6 relative">
       
       <!-- Bouton fermer -->
-      <button onclick="closeArticleModal()" class="absolute top-3 right-3 text-gray-600 hover:text-red-600 text-xl font-bold">
-        ✕
+      <button onclick="LikedArticleModal()" class="absolute top-3 right-3 text-gray-600 hover:text-red-600 text-xl font-bold">
+        Like !
       </button>
 
       <!-- Contenu dynamique -->
