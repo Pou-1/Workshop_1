@@ -8,7 +8,14 @@
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
         <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Connexion</h2>
-        <form method="post" class="space-y-4">
+        
+        <?php if (!empty($erreur)): ?>
+            <div class="bg-red-100 text-red-700 p-2 rounded mb-4 text-center">
+                <?= htmlspecialchars($erreur) ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="post" action="../Controlleur/login.php" class="space-y-4">
             <div>
                 <label class="block text-gray-700">Email :</label>
                 <input type="email" name="email" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300">

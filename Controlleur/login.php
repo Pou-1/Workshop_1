@@ -1,8 +1,4 @@
 <?php
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 require_once '../Modele/connexion.php';
 
 $erreur = '';
@@ -20,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_start();
         $_SESSION['user'] = $user;
 
-        header('Location: /Workshop_1/Vue/vue_accueil.php');
+        header('Location: ../Vue/main.php');
         exit();
 
     } else {
