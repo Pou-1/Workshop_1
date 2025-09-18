@@ -55,12 +55,15 @@ $articles = include "../Modele/article.php";
         <div id="tagContainer" class="flex gap-2 overflow-hidden w-[400px]">
             <?php
             $navbarTags = ['Découverte', 'Science', 'Environnement', 'Technologie', 'Espace', 'Sport', 'Santé', 'Culture', 'Histoire', 'Art', 'Musique', 'Cinéma', 'Littérature'];
-            foreach ($navbarTags as $tag): ?>
-                <a href="?tag=<?= urlencode($tag) ?>"
-                    class="px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 whitespace-nowrap min-w-fit <?= (isset($_GET['tag']) && strtolower($_GET['tag']) === strtolower($tag)) ? 'bg-blue-600 text-white' : '' ?>">
+            foreach ($navbarTags as $tag):
+                $isSelected = (isset($_GET['tag']) && strtolower($_GET['tag']) === strtolower($tag));
+                // Si le tag est sélectionné, le lien retire le filtre (redirige vers la page sans paramètre tag)
+                $href = $isSelected ? '?' : '?tag=' . urlencode($tag);
+            ?>
+                <a href="<?= $href ?>"
+                    class="px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 whitespace-nowrap min-w-fit <?= $isSelected ? 'bg-blue-600 text-white' : '' ?>">
                     #<?= htmlspecialchars($tag) ?>
                 </a>
-
             <?php endforeach; ?>
         </div>
 
