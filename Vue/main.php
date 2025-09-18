@@ -44,34 +44,36 @@ $data = require "../Modele/modele_reco.php";
                     <?php endif; ?>
                 </span>
             </h1>
-            <img src="../logo/like.svg" onclick="FilterLikeArticles()" alt="Logout" id="FilterLike"
-                class="w-10 cursor-pointer rounded-full p-2 bg-[#2c3131] text-red-500 h-10 hover:opacity-80">
+            <div onclick="FilterLikeArticles()" class="cursor-pointer bg-[#2c3131] items-center justify-center flex gap-2 text-red-800 w-52 py-1 rounded-full">
+                <p class="text-white">Likes</p>
+                <img src="../logo/like.svg"  alt="Logout" id="FilterLike"
+                    class="w-10 rounded-full p-2 text-red-500 h-10 hover:opacity-80">
+            </div>
         </header>
     </div>
 
     <div class="w-full shadow bg-white flex justify-center">
         <nav class="w-2/3 flex items-center justify-between py-4 mb-2">
-            <div class="flex items-center gap-2">
-                <button id="leftArrow" class="text-xl px-2 text-gray-600 hover:text-black" disabled>
+            <div class="flex items-center relative w-fit rounded-full">
+                <button id="leftArrow" class="text-xl absolute -left-1 backdrop-blur bg-red-300/5 w-12 h-12 rounded-full p-1 text-red-600 hover:text-black" disabled>
                     &#8592;
                 </button>
 
-                <div id="tagContainer" class="flex gap-2 overflow-hidden w-[400px]">
+                <div id="tagContainer" class="flex pl-14 pr-14 gap-3 overflow-hidden rounded-xl w-[800px]">
                     <?php
                     $navbarTags = ['Découverte', 'Science', 'Environnement', 'Technologie', 'Espace', 'Sport', 'Santé', 'Culture', 'Histoire', 'Art', 'Musique', 'Cinéma', 'Littérature'];
                     foreach ($navbarTags as $tag):
                         $isSelected = (isset($_GET['tag']) && strtolower($_GET['tag']) === strtolower($tag));
-                        // Si le tag est sélectionné, le lien retire le filtre (redirige vers la page sans paramètre tag)
                         $href = $isSelected ? '?' : '?tag=' . urlencode($tag);
                         ?>
                         <a href="<?= $href ?>"
-                            class="px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 whitespace-nowrap min-w-fit <?= $isSelected ? 'bg-blue-600 text-white' : '' ?>">
+                            class="px-3 py-1 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 whitespace-nowrap min-w-fit border-2 trans-fast <?= $isSelected ? 'border-red-600' : '' ?>">
                             #<?= htmlspecialchars($tag) ?>
                         </a>
                     <?php endforeach; ?>
                 </div>
 
-                <button id="rightArrow" class="text-xl px-2 text-gray-600 hover:text-black">
+                <button id="rightArrow" class="text-xl absolute -right-1 backdrop-blur bg-red-300/5 w-12 h-12 rounded-full p-1 text-red-600 hover:text-black">
                     &#8594;
                 </button>
             </div>
@@ -79,10 +81,11 @@ $data = require "../Modele/modele_reco.php";
             <form method="GET" action="" class="flex items-center gap-2">
                 <input type="text" name="search" placeholder="Rechercher un article..."
                     value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>"
-                    class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                    class="border-b-2 pr-3 trans-fast hover:border-b-black py-1 focus:outline-none" />
 
-                <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
-                    Rechercher
+                <button type="submit text-red-500">
+                    <img src="../logo/search.svg" alt="Search"
+                class="w-10 cursor-pointer rounded-full p-2 bg-[#2c3131] text-red-500 h-10 hover:opacity-80">
                 </button>
             </form>
         </nav>
