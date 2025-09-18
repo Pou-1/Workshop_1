@@ -59,17 +59,6 @@ foreach ($scores as $articleId => $totalScore) {
 
 arsort($recommendations);
 
-echo "<h2>Recommandations pour l’utilisateur $userId</h2>";
-if (empty($recommendations)) {
-    echo "<p>Aucune recommandation trouvée.</p>";
-} else {
-    echo "<ul>";
-    foreach ($recommendations as $articleId => $score) {
-        echo "<li>Article $articleId : " . number_format($score, 4) . "</li>";
-    }
-    echo "</ul>";
-}
-
 function pearsonCorrelation($scores1, $scores2) {
     $common = [];
     foreach ($scores1 as $articleId => $s1) {
