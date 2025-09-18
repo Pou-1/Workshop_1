@@ -6,7 +6,8 @@ session_start();
 
 require_once "../Modele/connexion.php";
 
-$articles = require_once "../Modele/article.php";
+$articles = include "../Modele/article.php";
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -15,6 +16,7 @@ $articles = require_once "../Modele/article.php";
   <title>Accueil - Workshop</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="../css/style.css"></script>
+  <script src="../js/navbar.js" defer></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
     
@@ -39,11 +41,13 @@ $articles = require_once "../Modele/article.php";
         <!-- Conteneur scrollable des tags -->
         <div id="tagContainer" class="flex gap-2 overflow-hidden w-[400px]">
             <?php
-            $navbarTags = ['PHP', 'JS', 'CSS', 'SQL', 'VueJS', 'Laravel', 'React', 'Docker'];
+            $navbarTags = ['Découverte', 'Science', 'Environnement', 'Technologie', 'Espace', 'Sport', 'Santé', 'Culture', 'Histoire', 'Art', 'Musique', 'Cinéma', 'Littérature'];
             foreach ($navbarTags as $tag): ?>
-                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded cursor-pointer whitespace-nowrap min-w-fit">
+                <a href="?tag=<?= urlencode($tag) ?>"
+                    class="px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 whitespace-nowrap min-w-fit <?= (isset($_GET['tag']) && strtolower($_GET['tag']) === strtolower($tag)) ? 'bg-blue-600 text-white' : '' ?>">
                     #<?= htmlspecialchars($tag) ?>
-                </span>
+                </a>
+
             <?php endforeach; ?>
         </div>
 
@@ -56,18 +60,18 @@ $articles = require_once "../Modele/article.php";
     <!-- Barre de recherche -->
     <form method="GET" action="" class="flex items-center gap-2">
         <input
-            type="text"
-            name="search"
-            placeholder="Rechercher un article..."
-            class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
+        type="text"
+        name="search"
+        placeholder="Rechercher un article..."
+        value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>"
+        class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+    />
+
         <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
             Rechercher
         </button>
     </form>
 </nav>
-
-
 
   <main class="container mx-auto mt-8 p-4">
     <h2 class="text-xl font-semibold mb-4">Liste des articles</h2>
@@ -110,31 +114,3 @@ $articles = require_once "../Modele/article.php";
 
 </body>
 </html>
-
-<script>
-    const tagContainer = document.getElementById('tagContainer');
-    const leftArrow = document.getElementById('leftArrow');
-    const rightArrow = document.getElementById('rightArrow');
-
-    const scrollAmount = 120; // Ajuste selon la taille des tags
-
-    leftArrow.addEventListener('click', () => {
-        tagContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-        updateArrows();
-    });
-
-    rightArrow.addEventListener('click', () => {
-        tagContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-        updateArrows();
-    });
-
-    function updateArrows() {
-        setTimeout(() => {
-            leftArrow.disabled = tagContainer.scrollLeft <= 0;
-            rightArrow.disabled = tagContainer.scrollLeft + tagContainer.clientWidth >= tagContainer.scrollWidth;
-        }, 200);
-    }
-
-    window.addEventListener('load', updateArrows);
-    tagContainer.addEventListener('scroll', updateArrows);
-</script>

@@ -1,9 +1,15 @@
 <?php
-// article.php → renvoie un tableau d’articles avec tags et auteurs détaillés
+require_once "connexion.php";
 
-// Charger les articles
-$stmt = $pdo->query("SELECT id, titre, resumee, tags, date_publication, auteurs FROM articles");
+// Charger tous les articles
+$sql = "SELECT id, titre, resumee, tags, date_publication, auteurs FROM articles";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
 $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$filteredArticles = [];
+$searchTerm = isset($_GET['search']) ? strtolower(trim($_GET['search'])) : null;
+$selectedTag = isset($_GET['tag']) ? strtolower(trim($_GET['tag'])) : null;
 
 foreach ($articles as &$article) {
     // --- Tags ---
@@ -27,6 +33,46 @@ foreach ($articles as &$article) {
         $authorDetails = $stmtAuthors->fetchAll(PDO::FETCH_ASSOC);
     }
     $article['auteurs'] = $authorDetails;
+
+    // --- Filtrage ---
+    $matchesSearch = false;
+    $matchesTag = false;
+
+    // --- Recherche par titre ou auteur ---
+    if ($searchTerm) {
+        $foundInTitle = strpos(strtolower($article['titre']), $searchTerm) !== false;
+        $foundInAuthor = false;
+        foreach ($authorDetails as $auteur) {
+            $fullName = strtolower($auteur['prenom'] . ' ' . $auteur['nom']);
+            if (
+                strpos($fullName, $searchTerm) !== false ||
+                strpos(strtolower($auteur['prenom']), $searchTerm) !== false ||
+                strpos(strtolower($auteur['nom']), $searchTerm) !== false
+            ) {
+                $foundInAuthor = true;
+                break;
+            }
+        }
+        $matchesSearch = $foundInTitle || $foundInAuthor;
+    } else {
+        $matchesSearch = true;
+    }
+
+    // --- Filtrage par tag (navbar) ---
+    if ($selectedTag) {
+        foreach ($tagDetails as $tag) {
+            if (strtolower($tag['nom']) === $selectedTag) {
+                $matchesTag = true;
+                break;
+            }
+        }
+    } else {
+        $matchesTag = true;
+    }
+
+    if ($matchesSearch && $matchesTag) {
+        $filteredArticles[] = $article;
+    }
 }
 
-return $articles;
+return $filteredArticles;
