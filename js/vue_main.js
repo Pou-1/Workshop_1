@@ -20,8 +20,42 @@ async function checkIfLiked(userId, articleId) {
   }
 }
 
+async function checkIfRead(userId, articleId) {
+  try {
+    const res = await fetch("../Modele/checkIfRead.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId, article_id: articleId })
+    });
+    const data = await res.json();
+    return data.success && data.read === true;
+  } catch (err) {
+    console.error("Erreur checkIfRead :", err);
+    return false;
+  }
+}
+
+async function markAsRead(userId, articleId) {
+  try {
+    const res = await fetch("../Modele/read.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId, article_id: articleId })
+    });
+    const data = await res.json();
+    console.log("Lecture enregistrée :", data);
+  } catch (err) {
+    console.error("Erreur markAsRead :", err);
+  }
+}
+
 async function openArticleModal(article, userId) {
   currentArticleId = article.id;
+
+  const isRead = await checkIfRead(userId, currentArticleId);
+  if (!isRead) {
+    await markAsRead(userId, currentArticleId);
+  }
 
   const isLiked = await checkIfLiked(userId, currentArticleId);
   console.log("isLiked =", isLiked);
