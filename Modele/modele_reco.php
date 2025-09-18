@@ -2,16 +2,8 @@
 require_once "connexion.php";
 
 // On suppose que l'id de l'utilisateur courant en session est récupéré ici
-$userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 9; 
+$userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 2;
 
-// ======================================================================
-// 1. Construire la matrice utilisateur ↔ article avec des scores
-// ======================================================================
-// Rappel des règles :
-//  - 0 = l'utilisateur n'a jamais consulté ni liké l'article
-//  - 1 = l'utilisateur a consulté mais pas liké
-//  - 2 = l'utilisateur a consulté ET liké
-// ======================================================================
 $sql = "
     SELECT 
         u.id AS user_id,
@@ -26,23 +18,49 @@ $sql = "
     LEFT JOIN lus l ON l.user_id = u.id AND l.articles_id = a.id
     LEFT JOIN likes k ON k.user_id = u.id AND k.articles_id = a.id
 ";
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// On construit un tableau associatif :
-// $matrix[user_id][article_id] = score
 $matrix = [];
 foreach ($rows as $row) {
-    $matrix[$row['user_id']][$row['article_id']] = (int)$row['score'];
+    $matrix[$row['user_id']][$row['article_id']] = (float)$row['score'];
 }
 
-// ======================================================================
-// 2. Fonction pour calculer la similarité entre deux utilisateurs
-//    via le coefficient de corrélation de Pearson
-// ======================================================================
+$similarities = [];
+foreach ($matrix as $otherUserId => $scores) {
+    if ($otherUserId == $userId) continue;
+    $sim = pearsonCorrelation($matrix[$userId], $scores);
+    if ($sim > 0) {
+        $similarities[$otherUserId] = $sim;
+    }
+}
+
+$scores = [];
+$normalisation = [];
+
+foreach ($similarities as $otherUserId => $sim) {
+    foreach ($matrix[$otherUserId] as $articleId => $score) {
+        if ($matrix[$userId][$articleId] == 0 && $score > 0) {
+            if (!isset($scores[$articleId])) {
+                $scores[$articleId] = 0;
+                $normalisation[$articleId] = 0;
+            }
+            $scores[$articleId] += $score * $sim;
+            $normalisation[$articleId] += $sim;
+        }
+    }
+}
+
+$recommendations = [];
+foreach ($scores as $articleId => $totalScore) {
+    $recommendations[$articleId] = $totalScore / $normalisation[$articleId];
+}
+
+arsort($recommendations);
+
 function pearsonCorrelation($scores1, $scores2) {
-    // On ne garde que les articles que les deux utilisateurs ont vus/likés
     $common = [];
     foreach ($scores1 as $articleId => $s1) {
         if (isset($scores2[$articleId]) && ($s1 > 0 || $scores2[$articleId] > 0)) {
@@ -51,9 +69,8 @@ function pearsonCorrelation($scores1, $scores2) {
     }
 
     $n = count($common);
-    if ($n == 0) return 0; // aucun article en commun → similarité nulle
+    if ($n == 0) return 0;
 
-    // Calcul des sommes et produits pour Pearson
     $sum1 = $sum2 = $sum1Sq = $sum2Sq = $pSum = 0;
     foreach ($common as $articleId => $_) {
         $s1 = $scores1[$articleId];
@@ -65,13 +82,11 @@ function pearsonCorrelation($scores1, $scores2) {
         $pSum += $s1 * $s2;
     }
 
-    // Numérateur = covariance
     $num = $pSum - (($sum1 * $sum2) / $n);
-    // Dénominateur = produit des écarts-types
     $den = sqrt(($sum1Sq - pow($sum1, 2) / $n) * ($sum2Sq - pow($sum2, 2) / $n));
     if ($den == 0) return 0;
 
-    return $num / $den; // valeur entre -1 et 1
+    return $num / $den;
 }
 
 if (!isset($matrix[$userId])) {

@@ -16,7 +16,7 @@ $user_id = (int)$input["user_id"];
 $article_id = (int)$input["article_id"];
 
 try {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM read WHERE user_id = ? AND articles_id = ?");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM lus WHERE user_id = ? AND articles_id = ?");
     $stmt->execute([$user_id, $article_id]);
     $count = $stmt->fetchColumn();
 
