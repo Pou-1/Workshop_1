@@ -5,6 +5,15 @@ ini_set("display_errors", 1);
 session_start();
 
 require_once "../Modele/connexion.php";
+require_once "../Modele/articleLiked.php";
+
+$userId = $_SESSION['user']['id'] ?? null;
+
+if ($userId) {
+    $articlesLiked = getLikedArticles($pdo, $userId);
+} else {
+    $articlesLiked = [];
+}
 
 $articles = include "../Modele/article.php";
 
@@ -13,32 +22,36 @@ $articles = include "../Modele/article.php";
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Accueil - Workshop</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <script src="../css/style.css"></script>
   <script src="../js/navbar.js" defer></script>
+    <title>Accueil - Workshop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/vue_main.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-100 text-gray-800 w-screen overflow-x-hidden">
     
-<header class="bg-blue-600 text-white gap-2 p-6 pl-52 flex shadow-md">
-    <h1 class="text-2xl font-bold">
+<div class="w-full shadow bg-red-600 flex justify-center shadow-md">
+<header class="w-2/3 text-white gap-2 py-6 flex-between flex">
+    <h1 class="text-2xl w-full">
         Bienvenue
-        <?php if (isset($_SESSION['user'])): ?>
-            <?= htmlspecialchars($_SESSION['user']['nom']) . " " . htmlspecialchars($_SESSION['user']['prenom']) ?>
-        <?php endif; ?>
+        <span class="font-bold text-2xl">
+            <?php if (isset($_SESSION['user'])): ?>
+                <?= htmlspecialchars($_SESSION['user']['nom']) . " " . htmlspecialchars($_SESSION['user']['prenom']) ?>
+            <?php endif; ?>
+        </span>
     </h1>
+    <img src="../logo/like.svg" onclick="FilterLikeArticles()" alt="Logout" id="FilterLike" class="w-10 cursor-pointer rounded-full p-2 bg-[#2c3131] text-red-500 h-10 hover:opacity-80">
 </header>
+</div>
 
-<!-- Navbar avec tags défilants et barre de recherche -->
-<nav class="bg-white shadow flex items-center justify-between px-10 py-4 mb-2">
-    <!-- Tags avec flèches de défilement -->
+<div class="w-full shadow bg-white flex justify-center">
+<nav class="w-2/3 flex items-center justify-between py-4 mb-2">
     <div class="flex items-center gap-2">
-        <!-- Flèche gauche -->
         <button id="leftArrow" class="text-xl px-2 text-gray-600 hover:text-black" disabled>
             &#8592;
         </button>
 
-        <!-- Conteneur scrollable des tags -->
         <div id="tagContainer" class="flex gap-2 overflow-hidden w-[400px]">
             <?php
             $navbarTags = ['Découverte', 'Science', 'Environnement', 'Technologie', 'Espace', 'Sport', 'Santé', 'Culture', 'Histoire', 'Art', 'Musique', 'Cinéma', 'Littérature'];
@@ -51,13 +64,11 @@ $articles = include "../Modele/article.php";
             <?php endforeach; ?>
         </div>
 
-        <!-- Flèche droite -->
         <button id="rightArrow" class="text-xl px-2 text-gray-600 hover:text-black">
             &#8594;
         </button>
     </div>
 
-    <!-- Barre de recherche -->
     <form method="GET" action="" class="flex items-center gap-2">
         <input
         type="text"
@@ -72,44 +83,69 @@ $articles = include "../Modele/article.php";
         </button>
     </form>
 </nav>
-
-  <main class="container mx-auto mt-8 p-4">
-    <h2 class="text-xl font-semibold mb-4">Liste des articles</h2>
-    <ul class="gap-4 grid grid-cols-3">
-      <?php foreach ($articles as $article): ?>
-    <li class="bg-white p-4 shadow rounded-lg hover:border-blue-500 transition hover:bg-blue-50 border-2 border-white">
-        <div class="flex justify-between items-center mb-2">
-            <h3 class="text-lg font-bold"><?= htmlspecialchars($article['titre']) ?></h3>
-            <span class="text-sm text-gray-500"><?= htmlspecialchars($article['date_publication']) ?></span>
-        </div>
-
-        <p class="text-gray-700 mb-3"><?= htmlspecialchars($article['resumee']) ?></p>
-
-        <!-- Tags -->
-        <div class="flex flex-wrap gap-2 mb-2">
-            <?php foreach ($article['tags'] as $tag): ?>
-                <span class="px-2 py-1 text-sm bg-blue-100 text-blue-600 rounded">
-                    #<?= htmlspecialchars($tag['nom']) ?>
-                </span>
+    </div>
+ 
+<div class="w-full flex justify-center relative">
+    <main class="container w-2/3 absolute mt-8 p-4 h-full trans-fast" id="articlesDiv">
+        <h2 class="text-xl font-semibold mb-4">Liste des articles</h2>
+        <ul class="gap-4 grid grid-cols-3">
+            <?php foreach ($articles as $article): ?>
+                <li 
+                    class="cursor-pointer bg-white p-4 shadow rounded-lg hover:border-red-500 transition hover:bg-red-50 border-2 border-white"
+                    onclick="openArticleModal(<?= htmlspecialchars(json_encode($article), ENT_QUOTES, 'UTF-8') ?>, <?= htmlspecialchars($_SESSION['user']['id'])?>)">
+                    
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-bold"><?= htmlspecialchars($article['titre']) ?></h3>
+                        <span class="text-sm text-gray-500"><?= htmlspecialchars($article['date_publication']) ?></span>
+                    </div>
+                    <p class="text-gray-700 mb-3"><?= htmlspecialchars($article['resumee']) ?></p>
+                </li>
             <?php endforeach; ?>
-        </div>
+        </ul>
+    </main>
 
-        <!-- Auteurs -->
-        <div class="flex flex-wrap gap-2">
-            <?php foreach ($article['auteurs'] as $auteur): ?>
-                <span class="px-2 py-1 text-sm bg-green-100 text-green-600 rounded">
-                    <?= htmlspecialchars($auteur['prenom'] . " " . $auteur['nom']) ?>
-                </span>
+    <main class="container w-2/3 mt-8 p-4 absolute h-full opacity-0 translate-x-[1000px] trans-fast" id="likedArticlesDiv">
+        <h2 class="text-xl font-semibold mb-4">Liste des articles Likés</h2>
+        <ul class="gap-4 grid grid-cols-3">
+            <?php foreach ($articlesLiked as $article): ?>
+                <li 
+                    class="cursor-pointer bg-white p-4 shadow rounded-lg hover:border-red-500 transition hover:bg-red-50 border-2 border-white"
+                    onclick="openArticleModal(<?= htmlspecialchars(json_encode($article), ENT_QUOTES, 'UTF-8') ?>, <?= htmlspecialchars($_SESSION['user']['id'])?>)">
+                    
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-bold"><?= htmlspecialchars($article['titre']) ?></h3>
+                        <span class="text-sm text-gray-500"><?= htmlspecialchars($article['date_publication']) ?></span>
+                    </div>
+                    <p class="text-gray-700 mb-3"><?= htmlspecialchars($article['resumee']) ?></p>
+                </li>
             <?php endforeach; ?>
-        </div>
-    </li>
-<?php endforeach; ?>
+        </ul>
+    </main>
+</div>
+  <div id="articleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="absolute w-full h-full z-0" onclick="closeArticleModal()"></div>
+    <div class="bg-white rounded-lg shadow-lg z-10 max-w-3xl w-full p-6 relative">
+      
+      <button id="LikeButton" onclick="LikedArticleModal(<?= htmlspecialchars($_SESSION['user']['id'])?>, currentArticleId)"  class="absolute right-6 top-0 mt-4 border-red-600 border bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200">
+        ❤️ Like !
+      </button>
 
-    </ul>
-  </main>
+      <h2 id="modalTitle" class="text-2xl font-bold mb-2"></h2>
+      <p id="modalDate" class="text-sm text-gray-500 mb-4"></p>
+      <img id="modalImage" class="w-full h-64 object-cover rounded mb-4 hidden" />
 
-  <footer class="bg-gray-200 text-center p-4 mt-8">
-    <p>&copy; <?= date("Y") ?> - Workshop</p>
+      <p id="modalResumee" class="text-gray-700 mb-4"></p>
+      <p id="modalContenu" class="text-gray-800 mb-4"></p>
+
+      <div class="flex flex-wrap gap-2 mb-2" id="modalTags"></div>
+      <div class="flex flex-wrap gap-2" id="modalAuteurs"></div>
+    </div>
+  </div>
+
+  <footer class="absolute w-full px-52 bottom-0 ">
+    <div class="bg-[#2c3131] rounded-t-xl w-full text-white text-center p-4 mt-8">
+        <p>&copy; <?= date("Y") ?> - Workshop</p>
+    </div>
   </footer>
 
 </body>

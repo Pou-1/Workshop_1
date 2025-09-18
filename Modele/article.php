@@ -12,7 +12,6 @@ $searchTerm = isset($_GET['search']) ? strtolower(trim($_GET['search'])) : null;
 $selectedTag = isset($_GET['tag']) ? strtolower(trim($_GET['tag'])) : null;
 
 foreach ($articles as &$article) {
-    // --- Tags ---
     $tagIds = array_filter(array_map('trim', explode(',', $article['tags'])));
     $tagDetails = [];
     if (!empty($tagIds)) {
@@ -23,7 +22,6 @@ foreach ($articles as &$article) {
     }
     $article['tags'] = $tagDetails;
 
-    // --- Auteurs ---
     $authorIds = array_filter(array_map('trim', explode(',', $article['auteurs'])));
     $authorDetails = [];
     if (!empty($authorIds)) {

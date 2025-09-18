@@ -1,0 +1,35 @@
+<?php
+function getLikedArticles($pdo, $userId) {
+    $stmt = $pdo->prepare("
+        SELECT a.* 
+        FROM articles a
+        INNER JOIN likes l ON a.id = l.articles_id
+        WHERE l.user_id = ?
+    ");
+    $stmt->execute([$userId]);
+    $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($articles as &$article) {
+        $tagIds = array_filter(array_map('trim', explode(',', $article['tags'])));
+        $tagDetails = [];
+        if (!empty($tagIds)) {
+            $in  = str_repeat('?,', count($tagIds) - 1) . '?';
+            $stmtTags = $pdo->prepare("SELECT id, nom FROM tags WHERE id IN ($in)");
+            $stmtTags->execute($tagIds);
+            $tagDetails = $stmtTags->fetchAll(PDO::FETCH_ASSOC);
+        }
+        $article['tags'] = $tagDetails;
+
+        $authorIds = array_filter(array_map('trim', explode(',', $article['auteurs'])));
+        $authorDetails = [];
+        if (!empty($authorIds)) {
+            $in  = str_repeat('?,', count($authorIds) - 1) . '?';
+            $stmtAuthors = $pdo->prepare("SELECT id, nom, prenom FROM auteurs WHERE id IN ($in)");
+            $stmtAuthors->execute($authorIds);
+            $authorDetails = $stmtAuthors->fetchAll(PDO::FETCH_ASSOC);
+        }
+        $article['auteurs'] = $authorDetails;
+    }
+
+    return $articles;
+}
