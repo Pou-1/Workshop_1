@@ -8,7 +8,7 @@ $scores = [];
 $normalisation = [];
 
 foreach ($similarity as $otherUserId => $sim) {
-    if ($sim <= 0) continue; // ignorer corrélations négatives
+    if ($sim <= 0) continue;
     foreach ($matrix[$otherUserId] as $articleId => $score) {
         if ($matrix[$userId][$articleId] == 0 && $score > 0) {
             if (!isset($scores[$articleId])) {
