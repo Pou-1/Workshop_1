@@ -126,7 +126,7 @@ function FilterLikeArticles() {
 
   if(FilterLike.classList.contains("text-red-500")){
     FilterLike.classList.add("text-white", "bg-red-500");
-    FilterLike.classList.remove("text-red-500", "bg-white");
+    FilterLike.classList.remove("text-red-500", "bg-[#2c3131]");
     
     articles.classList.remove("translate-x-0", "opacity-100");
     articles.classList.add("translate-x-[1000px]", "opacity-0");
@@ -135,7 +135,7 @@ function FilterLikeArticles() {
     liked.classList.add("translate-x-0", "opacity-100");
   }else{
     FilterLike.classList.remove("text-white", "bg-red-500");
-    FilterLike.classList.add("text-red-500", "bg-white");
+    FilterLike.classList.add("text-red-500", "bg-[#2c3131]");
     
     articles.classList.add("translate-x-0", "opacity-100");
     articles.classList.remove("translate-x-[1000px]", "opacity-0");

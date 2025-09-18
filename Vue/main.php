@@ -26,7 +26,7 @@ $articles = require_once "../Modele/article.php";
     <script src="../js/vue_main.js"></script>
     <link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-100 text-gray-800 w-screen overflow-x-hidden">
     
 <div class="w-full shadow bg-red-600 flex justify-center shadow-md">
 <header class="w-2/3 text-white gap-2 py-6 flex-between flex">
@@ -38,7 +38,7 @@ $articles = require_once "../Modele/article.php";
             <?php endif; ?>
         </span>
     </h1>
-    <img src="../logo/like.svg" onclick="FilterLikeArticles()" alt="Logout" id="FilterLike" class="w-10 cursor-pointer rounded-full p-2 bg-white text-red-500 h-10 hover:opacity-80">
+    <img src="../logo/like.svg" onclick="FilterLikeArticles()" alt="Logout" id="FilterLike" class="w-10 cursor-pointer rounded-full p-2 bg-[#2c3131] text-red-500 h-10 hover:opacity-80">
 </header>
 </div>
 
