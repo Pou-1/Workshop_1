@@ -1,12 +1,8 @@
 <?php
-// article.php → renvoie un tableau d’articles avec tags et auteurs détaillés
-
-// Charger les articles
 $stmt = $pdo->query("SELECT * FROM articles");
 $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($articles as &$article) {
-    // --- Tags ---
     $tagIds = array_filter(array_map('trim', explode(',', $article['tags'])));
     $tagDetails = [];
     if (!empty($tagIds)) {
@@ -17,7 +13,6 @@ foreach ($articles as &$article) {
     }
     $article['tags'] = $tagDetails;
 
-    // --- Auteurs ---
     $authorIds = array_filter(array_map('trim', explode(',', $article['auteurs'])));
     $authorDetails = [];
     if (!empty($authorIds)) {
