@@ -95,7 +95,7 @@ $articles = include "../Modele/article.php";
                     onclick="openArticleModal(<?= htmlspecialchars(json_encode($article), ENT_QUOTES, 'UTF-8') ?>, <?= htmlspecialchars($_SESSION['user']['id'])?>)">
                     
                     <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-bold"><?= htmlspecialchars($article['titre']) ?></h3>
+                        <h3 class="text-lg font-bold truncate w-3/4"><?= htmlspecialchars($article['titre']) ?></h3>
                         <span class="text-sm text-gray-500"><?= htmlspecialchars($article['date_publication']) ?></span>
                     </div>
                     <p class="text-gray-700 mb-3"><?= htmlspecialchars($article['resumee']) ?></p>
@@ -124,9 +124,9 @@ $articles = include "../Modele/article.php";
 </div>
   <div id="articleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
     <div class="absolute w-full h-full z-0" onclick="closeArticleModal()"></div>
-    <div class="bg-white rounded-lg shadow-lg z-10 max-w-3xl w-full p-6 relative">
+    <div class="bg-white rounded-xl shadow-lg z-10 max-w-3xl w-full p-10 relative">
       
-      <button id="LikeButton" onclick="LikedArticleModal(<?= htmlspecialchars($_SESSION['user']['id'])?>, currentArticleId)"  class="absolute right-6 top-0 mt-4 border-red-600 border bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200">
+      <button id="LikeButton" onclick="LikedArticleModal(<?= htmlspecialchars($_SESSION['user']['id'])?>, currentArticleId)"  class="absolute right-10 top-10 border-red-600 border bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200">
         ❤️ Like !
       </button>
 
