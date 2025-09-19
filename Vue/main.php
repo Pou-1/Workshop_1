@@ -44,10 +44,12 @@ $data = require "../Modele/modele_reco.php";
                     <?php endif; ?>
                 </span>
             </h1>
-            <div onclick="FilterLikeArticles()" class="cursor-pointer bg-[#2c3131] items-center justify-center flex gap-2 text-red-800 w-52 py-1 rounded-full">
-                <p class="text-white">Likes</p>
-                <img src="../logo/like.svg"  alt="Logout" id="FilterLike"
-                    class="w-10 rounded-full p-2 text-red-500 h-10 hover:opacity-80">
+            <div onclick="FilterLikeArticles()" class="cursor-pointer items-center justify-center flex gap-2 px-3 py-1 rounded-full">
+                <p class="text-white font-bold">Likes</p>
+                <div  alt="Logout" id="FilterLike"
+                    class="w-8 rounded-full p-2 text-red-500 fill-current bg-[#2c3131] h-8 hover:opacity-80">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M305 151.1L320 171.8L335 151.1C360 116.5 400.2 96 442.9 96C516.4 96 576 155.6 576 229.1L576 231.7C576 343.9 436.1 474.2 363.1 529.9C350.7 539.3 335.5 544 320 544C304.5 544 289.2 539.4 276.9 529.9C203.9 474.2 64 343.9 64 231.7L64 229.1C64 155.6 123.6 96 197.1 96C239.8 96 280 116.5 305 151.1z"/></svg>
+                </div>
             </div>
         </header>
     </div>
@@ -78,14 +80,15 @@ $data = require "../Modele/modele_reco.php";
                 </button>
             </div>
 
-            <form method="GET" action="" class="flex items-center gap-2">
+            <form method="GET" action="" class="flex relative w-fit items-center gap-2">
                 <input type="text" name="search" placeholder="Rechercher un article..."
                     value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>"
                     class="border-b-2 pr-3 trans-fast hover:border-b-black py-1 focus:outline-none" />
 
                 <button type="submit text-red-500">
-                    <img src="../logo/search.svg" alt="Search"
-                class="w-10 cursor-pointer rounded-full p-2 bg-[#2c3131] text-red-500 h-10 hover:opacity-80">
+                    <div alt="Search" class="w-10 cursor-pointer fill-current text-gray-400 rounded-full p-2 -top-1 absolute right-0 h-10 hover:opacity-80">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z"/></svg>
+                    </div>
                 </button>
             </form>
         </nav>
@@ -116,7 +119,7 @@ $data = require "../Modele/modele_reco.php";
                             continue;
                         ?>
                         <li class="cursor-pointer bg-white p-4 shadow rounded-lg 
-                       hover:border-red-500 transition hover:bg-red-50 
+                       hover:border-red-500 transition
                        border-2 border-white" onclick="openArticleModal(
                     <?= htmlspecialchars(json_encode($article), ENT_QUOTES, 'UTF-8') ?>,
                     <?= htmlspecialchars($_SESSION['user']['id']) ?>
@@ -147,7 +150,7 @@ $data = require "../Modele/modele_reco.php";
             </div>
             <ul class="gap-4 grid grid-cols-3">
                 <?php foreach ($articles as $article): ?>
-                    <li class="cursor-pointer bg-white p-4 shadow rounded-lg hover:border-red-500 transition hover:bg-red-50 border-2 border-white"
+                    <li class="cursor-pointer bg-white p-4 shadow rounded-lg hover:border-red-500 transition border-2 border-white"
                         onclick="openArticleModal(<?= htmlspecialchars(json_encode($article), ENT_QUOTES, 'UTF-8') ?>, <?= htmlspecialchars($_SESSION['user']['id']) ?>)">
 
                         <div class="flex justify-between items-center mb-2">
@@ -168,7 +171,7 @@ $data = require "../Modele/modele_reco.php";
             </div>
             <ul class="gap-4 grid grid-cols-3">
                 <?php foreach ($articlesLiked as $article): ?>
-                    <li class="cursor-pointer bg-white p-4 shadow rounded-lg hover:border-red-500 transition hover:bg-red-50 border-2 border-white"
+                    <li class="cursor-pointer bg-white p-4 shadow rounded-lg hover:border-red-500 transition border-2 border-white"
                         onclick="openArticleModal(<?= htmlspecialchars(json_encode($article), ENT_QUOTES, 'UTF-8') ?>, <?= htmlspecialchars($_SESSION['user']['id']) ?>)">
 
                         <div class="flex justify-between items-center mb-2">
@@ -181,8 +184,7 @@ $data = require "../Modele/modele_reco.php";
             </ul>
         </main>
     </div>
-    <div id="articleModal" class="hidden fixed inset-0 bg-black mb-32 bg-opacity-50 flex justify-center items-center z-50">
-        <div class="absolute w-full h-full z-0" onclick="closeArticleModal()"></div>
+    <div id="articleModal" class="hidden mb-32 flex justify-center items-center z-50">
         <div class="bg-white rounded-xl shadow-lg z-10 max-w-3xl w-full p-10 relative">
 
             <button id="LikeButton"

@@ -105,6 +105,8 @@ async function openArticleModal(article, userId) {
   }
 
   document.getElementById("articleModal").classList.remove("hidden");
+  const target = document.getElementById("articleModal");
+  target.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function closeArticleModal() {
