@@ -189,7 +189,7 @@ $data = require "../Modele/modele_reco.php";
 
             <button id="LikeButton"
                 onclick="LikedArticleModal(<?= htmlspecialchars($_SESSION['user']['id']) ?>, currentArticleId)"
-                class="absolute right-10 top-10 border-red-600 border bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200">
+                class="absolute right-10 top-10 border-red-600 border bg-red-100 text-red-600 px-4 py-2 rounded-md hover:bg-red-200">
                 ❤️ Like !
             </button>
 
